@@ -7,7 +7,7 @@
 Adafruit_MPU6050 mpu;
 
 void setup(void) {
-  Serial.begin(115200);
+  Serial.begin(115200); //configura comunicação serial com 115200 bps
   while (!Serial)
     delay(10); // will pause Zero, Leonardo, etc until serial console opens
 
@@ -85,11 +85,40 @@ void setup(void) {
   delay(100);
 }
 
+void print_accelaration(){
+  unsigned long Accer_time = millis();
+  int i = 0;
+  
+  while(i!=1000){ 
+    sensors_event_t a, g, temp;
+    mpu.getEvent(&a, &g, &temp);
+    
+    Serial.print(a.acceleration.x,10);
+    Serial.print("   ");
+    Serial.print(millis()-Accer_time);
+    Serial.println();
+    i++;
+    delay(5); // Esse delay serve como ajuste de tempo entre as leituras do MPU6050
+  }
+  Serial.println("//////////////////");
+}
+
 void loop() {
 
   /* Get new sensor events with the readings */
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
+
+  if(Serial.available()){
+    switch(Serial.read()){
+      case 'A':
+
+        print_accelaration();
+        
+    }  
+  }
+
+
 
   /* Print out the values */
   //Serial.print("Acceleration X: ");
@@ -97,7 +126,7 @@ void loop() {
   //Serial.print(", Y: ");
   //Serial.print(a.acceleration.y);
   //Serial.print(", Z: ");
-  Serial.print(a.acceleration.z);
+  //Serial.print(a.acceleration.z);
   //Serial.println(" m/s^2");
 
   //Serial.print("Rotation X: ");
@@ -112,6 +141,6 @@ void loop() {
   //Serial.print(temp.temperature);
   //Serial.println(" degC");
 
-  Serial.println("");
+  //Serial.println("");
   delay(500);
 } 
